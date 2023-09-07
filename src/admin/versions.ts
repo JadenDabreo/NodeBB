@@ -1,10 +1,13 @@
 import request from 'request';
 import meta from '../meta';
+import promisify from '../promisify';
+
 
 let versionCache = '';
 let versionCacheLastModified = '';
 
 const isPrerelease = /^v?\d+\.\d+\.\d+-.+$/;
+
 
 
 function getLatestVersion(callback: (error: Error | null, version?: string) => void) {
@@ -48,3 +51,4 @@ function getLatestVersion(callback: (error: Error | null, version?: string) => v
 
 export { getLatestVersion };
 export { isPrerelease };
+promisify(exports);
