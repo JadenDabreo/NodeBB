@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isPrerelease = exports.getLatestVersion = void 0;
 const request_1 = __importDefault(require("request"));
 const meta_1 = __importDefault(require("../meta"));
+const promisify_1 = __importDefault(require("../promisify"));
 let versionCache = '';
 let versionCacheLastModified = '';
 const isPrerelease = /^v?\d+\.\d+\.\d+-.+$/;
@@ -45,3 +46,4 @@ function getLatestVersion(callback) {
     });
 }
 exports.getLatestVersion = getLatestVersion;
+(0, promisify_1.default)(exports);
