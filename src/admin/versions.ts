@@ -16,30 +16,32 @@ function getLatestVersion(callback: (error: Error | null, version?: string) => v
     if (versionCacheLastModified) {
         headers['If-Modified-Since'] = versionCacheLastModified;
     }
-
+    // The next line calls a function in a module that has not been updated to TS yet
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     request('https://api.github.com/repos/NodeBB/NodeBB/releases/latest', {
         json: true,
         headers: headers,
         timeout: 2000,
-    }, (err, res, latestRelease) => {
+    }, (err: Error, res: request.Response, latestRelease) => {
         if (err) {
             return callback(err);
         }
 
-        if (res.statusCode === 304) {
+        if ((res as { statusCode : number}).statusCode === 304) {
             return callback(null, versionCache);
         }
 
-        if (res.statusCode !== 200) {
-            return callback(new Error(res.statusMessage));
+        if ((res as { statusCode : number}).statusCode !== 200) {
+            return callback(new Error((res as { statusMessage : string }).statusMessage));
         }
 
-        if (!latestRelease || !latestRelease.tag_name) {
+        if (!latestRelease || !((latestRelease as { tag_name : string }).tag_name)) {
             return callback(new Error('[[error:cant-get-latest-release]]'));
         }
-        const tagName = latestRelease.tag_name.replace(/^v/, '');
+        const tagName = (latestRelease as { tag_name : string}).tag_name.replace(/^v/, '');
         versionCache = tagName;
-        versionCacheLastModified = res.headers['last-modified'];
+        const s = 'last-modified';
+        versionCacheLastModified = (res as { headers : { 'last-modified' : string }}).headers[s];
         callback(null, versionCache);
     });
 }
